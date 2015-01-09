@@ -1,0 +1,55 @@
+<?php if ($this->teams): ?>
+    <div id="results_table" style="padding-top: 100px">
+        <?php echo $this->partial('index/template/index.phtml',
+                array('teams' => $this->teams, 'team_statistics' => $this->team_statistics,
+                    'round' => $this->round, 'is_finish' => $this->is_finish));
+        ?>
+    </div>    
+<?php endif; ?>
+
+<?php if (!$this->is_finish): ?>
+<div style="padding:40px 0px;">
+    <button id="fastforward" type="button" class="btn btn-success">Проиграть все матчи</button>
+    <button id="nextweek" type="button" class="btn btn-primary">Следующая неделя</button>
+</div>
+<?php endif; ?>
+
+
+<script type="text/javascript">
+    $(function() {
+        $('#nextweek').click(function() {
+            $.ajax({
+                url: 'index/nextweek',
+                dataType: 'json',
+                type: 'post',
+                data: {
+                    'nextweek': 'slow'
+                },
+                success: function(response) {
+                    if(response.is_finish !== undefined && response.is_finish == true){
+                        $('#nextweek').hide();
+                        $('#fastforward').hide();
+                    }
+                    $('#results_table').append(response.content);
+                }
+            });
+        });
+        $('#fastforward').click(function() {
+            $.ajax({
+                url: 'index/nextweek',
+                dataType: 'json',
+                type: 'post',
+                data: {
+                    'nextweek': 'fast'
+                },
+                success: function(response) {
+                    if(response.is_finish !== undefined && response.is_finish == true){
+                        $('#nextweek').hide();
+                        $('#fastforward').hide();
+                    }
+                    $('#results_table').append(response.content);
+                }
+            });
+        });
+    });
+</script>
